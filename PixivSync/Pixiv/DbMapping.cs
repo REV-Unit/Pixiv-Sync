@@ -1,0 +1,56 @@
+﻿using FluentNHibernate.Mapping;
+
+namespace PixivSync.Pixiv;
+
+public class ArtistMap : ClassMap<Artist>
+{
+    public ArtistMap()
+    {
+        Id(x => x.Id).GeneratedBy.Assigned();
+        Map(x => x.Name);
+        HasMany(x => x.Illusts).Inverse().Cascade.All();
+    }
+}
+
+public class IllustMap : ClassMap<Illust>
+{
+    public IllustMap()
+    {
+        Id(x => x.Id).GeneratedBy.Assigned();
+        References(x => x.Artist).Cascade.All();
+        Map(x => x.Title);
+        Map(x => x.Description);
+        HasManyToMany(x => x.Tags).Cascade.All().Table("IllustTag");
+        Map(x => x.RestrictType);
+        Map(x => x.CreateDate);
+        Map(x => x.UploadDate);
+        HasMany(x => x.Pages).Cascade.All();
+        Map(x => x.Deleted);
+    }
+}
+
+public class TagMap : ClassMap<Tag>
+{
+    public TagMap()
+    {
+        Id(x => x.Name);
+        Map(x => x.Translation);
+        Map(x => x.RomajiName);
+        HasManyToMany(x => x.Illusts).Inverse().Cascade.All().Table("IllustTag");
+    }
+}
+
+public class PageMap : ClassMap<Page>
+{
+    public PageMap()
+    {
+        CompositeId(x => x.Id).Mapped().KeyProperty(x => x.IllustId).KeyProperty(x => x.Number);
+        //References(x => x.Illust).Column("IllustId");
+        Map(x => x.Width);
+        Map(x => x.Height);
+        Map(x => x.ThumbMini);
+        Map(x => x.Small);
+        Map(x => x.Regular);
+        Map(x => x.Original);
+    }
+}
