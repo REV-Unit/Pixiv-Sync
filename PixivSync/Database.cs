@@ -5,6 +5,7 @@ using FluentNHibernate.Conventions.Helpers;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using PixivSync.Pixiv;
+using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
 using Serilog;
 
 namespace PixivSync;
@@ -23,6 +24,22 @@ public static class Database
             Log.Information("更新完毕");
         })
         .BuildSessionFactory();
+
+    public static async Task<IllustBookmarkInfo[]> GetBookmarksToProcess(bool addedOnly)
+    {
+        if (!addedOnly)
+        {
+            return await Account.GetAllBookmarks(Config.MainAccountId, Config.MainAccountCookie);
+        }
+
+        using ISession session = SessionFactory.OpenSession();
+        HashSet<long> ids = session.Query<Illust>().Select(illust => illust.Id).ToHashSet();
+        IllustBookmarkInfo[] delta = await Account.EnumerateBookmarks(Config.MainAccountId, Config.MainAccountCookie)
+            .TakeWhile(bookmarkInfo => ids.Contains(Convert.ToInt64(bookmarkInfo.id)))
+            .ToArrayAsync();
+        Log.Information("Delta {Delta} 个插画", delta.Length);
+        return delta;
+    }
 
     public static Illust[] Merge(IEnumerable<Illust> illusts)
     {

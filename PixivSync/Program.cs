@@ -1,7 +1,4 @@
-﻿using System.Net;
-using System.Net.Http;
-using Microsoft.Extensions.Configuration;
-using NHibernate;
+﻿using NHibernate;
 using PixivSync;
 using PixivSync.Pixiv;
 using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
@@ -9,10 +6,8 @@ using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
 #if DEBUG
-HttpClient.DefaultProxy = new WebProxy("127.0.0.1", 8888);
+//HttpClient.DefaultProxy = new WebProxy("127.0.0.1", 8888);
 #endif
-
-IConfiguration config = Config.Default;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -22,30 +17,19 @@ Log.Logger = new LoggerConfiguration()
 #endif
     .CreateLogger();
 
-IllustBookmarkInfo[] result = await Account.GetAllBookmarks(Config.MainAccountId, Config.MainAccountCookie);
+IllustBookmarkInfo[] bookmarkInfos = await Database.GetBookmarksToProcess(true);
 
-Log.Information("计算 Delta");
-
-IllustBookmarkInfo[] delta;
-using (ISession session = Database.SessionFactory.OpenSession())
-{
-    delta = result.ExceptBy(session.Query<Illust>().Select(illust => illust.Id), r => Convert.ToInt64(r.id)).ToArray();
-}
-
-//IllustBookmarkInfo[] delta= result.ToArray();
-
-Log.Information("Delta {Delta} 个插画", delta.Length);
-if (delta.Length == 0)
+if (bookmarkInfos.Length == 0)
 {
     Log.Information("不进行操作");
-    //return 1;
+    return 1;
 }
 
-Illust[] illusts = await Illust.FromBookmarkInfo(delta);
+Illust[] illusts = await Illust.FromBookmarkInfo(bookmarkInfos);
 Database.Merge(illusts);
 
 var storage = Storage.Default;
-// storage.ResolveArtistNameChanges();
+storage.ResolveArtistNameChanges();
 
 using (ISession session = Database.SessionFactory.OpenSession())
 {
