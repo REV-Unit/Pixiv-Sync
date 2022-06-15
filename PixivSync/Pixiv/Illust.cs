@@ -12,16 +12,16 @@ namespace PixivSync.Pixiv;
 
 public class Illust
 {
-    public virtual long Id { get; init; }
+    public long Id { get; init; }
     public virtual Artist? Artist { get; set; }
-    public virtual string? Title { get; set; }
-    public virtual string? Description { get; set; }
+    public string? Title { get; set; }
+    public string? Description { get; set; }
     public virtual ISet<Tag>? Tags { get; set; }
-    public virtual RestrictType RestrictType { get; set; }
-    public virtual DateTime CreateDate { get; set; }
-    public virtual DateTime UploadDate { get; set; }
+    public RestrictType RestrictType { get; set; }
+    public DateTime CreateDate { get; set; }
+    public DateTime UploadDate { get; set; }
     public virtual IList<Page>? Pages { get; set; }
-    public virtual bool Deleted { get; set; }
+    public bool Deleted { get; set; }
 
     public static async Task<Illust[]> FromBookmarkInfo(IEnumerable<IllustBookmarkInfo> bookmarks)
     {

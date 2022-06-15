@@ -6,7 +6,9 @@ using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
 #if DEBUG
-//HttpClient.DefaultProxy = new WebProxy("127.0.0.1", 8888);
+// Dammit don't use the environment proxy! (It does not support bypass IP pattern.) https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httpclient.defaultproxy?view=net-6.0
+Environment.SetEnvironmentVariable("HTTP_PROXY", string.Empty);
+Environment.SetEnvironmentVariable("HTTPS_PROXY", string.Empty);
 #endif
 
 Log.Logger = new LoggerConfiguration()
@@ -17,7 +19,8 @@ Log.Logger = new LoggerConfiguration()
 #endif
     .CreateLogger();
 
-IllustBookmarkInfo[] bookmarkInfos = await Database.GetBookmarksToProcess(true);
+var user = new User { Id = Config.MainAccountId, Cookie = Config.MainAccountCookie };
+IllustBookmarkInfo[] bookmarkInfos = await user.GetAddedBookmarks();
 
 if (bookmarkInfos.Length == 0)
 {
@@ -26,7 +29,7 @@ if (bookmarkInfos.Length == 0)
 }
 
 Illust[] illusts = await Illust.FromBookmarkInfo(bookmarkInfos);
-Database.Merge(illusts);
+await Database.Merge(illusts);
 
 var storage = Storage.Default;
 storage.ResolveArtistNameChanges();

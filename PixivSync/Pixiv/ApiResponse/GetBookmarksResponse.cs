@@ -19,7 +19,7 @@ public class GetBookmarksResponse
 
 public class IllustBookmarkInfo
 {
-    public object id { get; set; }
+    public object /* string or integer */ id { get; set; }
 
     // public string alt { get; set; }
     // public DateTime createDate { get; set; }

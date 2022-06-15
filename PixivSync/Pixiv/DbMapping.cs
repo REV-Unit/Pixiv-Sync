@@ -8,7 +8,7 @@ public class ArtistMap : ClassMap<Artist>
     {
         Id(x => x.Id).GeneratedBy.Assigned();
         Map(x => x.Name);
-        HasMany(x => x.Illusts).Inverse().Cascade.All();
+        HasMany(x => x.Illusts).Inverse().Cascade.All().LazyLoad();
     }
 }
 
@@ -17,14 +17,14 @@ public class IllustMap : ClassMap<Illust>
     public IllustMap()
     {
         Id(x => x.Id).GeneratedBy.Assigned();
-        References(x => x.Artist).Cascade.All();
+        References(x => x.Artist).Cascade.All().LazyLoad();
         Map(x => x.Title);
         Map(x => x.Description);
-        HasManyToMany(x => x.Tags).Cascade.All().Table("IllustTag");
+        HasManyToMany(x => x.Tags).Cascade.All().Table("IllustTag").LazyLoad();
         Map(x => x.RestrictType);
         Map(x => x.CreateDate);
         Map(x => x.UploadDate);
-        HasMany(x => x.Pages).Cascade.All();
+        HasMany(x => x.Pages).Cascade.All().LazyLoad();
         Map(x => x.Deleted);
     }
 }
@@ -36,7 +36,7 @@ public class TagMap : ClassMap<Tag>
         Id(x => x.Name);
         Map(x => x.Translation);
         Map(x => x.RomajiName);
-        HasManyToMany(x => x.Illusts).Inverse().Cascade.All().Table("IllustTag");
+        HasManyToMany(x => x.Illusts).Inverse().Cascade.All().Table("IllustTag").LazyLoad();
     }
 }
 

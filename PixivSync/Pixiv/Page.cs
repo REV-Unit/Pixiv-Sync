@@ -2,19 +2,19 @@
 
 public class Page
 {
-    public virtual PageId Id { get; init; }
-    public virtual int Width { get; set; }
-    public virtual int Height { get; set; }
-    public virtual string ThumbMini { get; set; }
-    public virtual string Small { get; set; }
-    public virtual string Regular { get; set; }
-    public virtual string Original { get; set; }
+    public PageId Id { get; init; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public string ThumbMini { get; set; }
+    public string Small { get; set; }
+    public string Regular { get; set; }
+    public string Original { get; set; }
 }
 
 public class PageId
 {
-    public virtual int Number { get; init; }
-    public virtual long IllustId { get; init; }
+    public int Number { get; init; }
+    public long IllustId { get; init; }
 
     protected bool Equals(PageId other)
     {

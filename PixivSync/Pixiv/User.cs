@@ -1,27 +1,31 @@
-﻿using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
+﻿using NHibernate;
+using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
 using Serilog;
 
 namespace PixivSync.Pixiv;
 
-public static class Account
+public class User
 {
+    public long Id { get; init; }
+    public string? Cookie { get; set; }
+
     private static int DivideCeiling(int x, int y)
     {
         return (x + y - 1) / y;
     }
 
-    public static async Task<IllustBookmarkInfo[]> GetAllBookmarks(long id, string? cookie = null)
+    public async Task<IllustBookmarkInfo[]> GetAllBookmarks()
     {
         Log.Information("获取所有收藏中");
         IPixivApi pixivApi = PixivApi.Default;
 
-        List<Task<GetBookmarksResponse>> getBookmarksTasks = new() { pixivApi.GetBookmarks(id, 0, 100, cookie) };
+        List<Task<GetBookmarksResponse>> getBookmarksTasks = new() { pixivApi.GetBookmarks(Id, 0, 100, Cookie) };
         GetBookmarksResponse resp1 = await getBookmarksTasks[0];
         int total = resp1.body.total;
 
         for (var i = 1; i < DivideCeiling(total, 100); i++)
         {
-            getBookmarksTasks.Add(pixivApi.GetBookmarks(id, i * 100, 100, cookie));
+            getBookmarksTasks.Add(pixivApi.GetBookmarks(Id, i * 100, 100, Cookie));
         }
 
         await Task.WhenAll(getBookmarksTasks);
@@ -30,7 +34,7 @@ public static class Account
         return result;
     }
 
-    public static async IAsyncEnumerable<IllustBookmarkInfo> EnumerateBookmarks(long id, string? cookie = null)
+    public async IAsyncEnumerable<IllustBookmarkInfo> EnumerateBookmarks()
     {
         Log.Information("枚举收藏中");
         IPixivApi pixivApi = PixivApi.Default;
@@ -40,7 +44,7 @@ public static class Account
         do
         {
             GetBookmarksResponse resp =
-                await pixivApi.GetBookmarks(id, 0, 100, cookie);
+                await pixivApi.GetBookmarks(Id, 0, 100, Cookie);
             total = resp.body.total;
 
             foreach (IllustBookmarkInfo bookmarkInfo in resp.body.works)
@@ -50,5 +54,16 @@ public static class Account
 
             offset += resp.body.works.Count;
         } while (offset < total);
+    }
+
+    public async Task<IllustBookmarkInfo[]> GetAddedBookmarks()
+    {
+        using ISession session = Database.SessionFactory.OpenSession();
+        HashSet<long> ids = session.Query<Illust>().Select(illust => illust.Id).ToHashSet();
+        IllustBookmarkInfo[] delta = await EnumerateBookmarks()
+            .TakeWhile(bookmarkInfo => !ids.Contains(Convert.ToInt64(bookmarkInfo.id)))
+            .ToArrayAsync();
+        Log.Information("Delta {Delta} 个插画", delta.Length);
+        return delta;
     }
 }

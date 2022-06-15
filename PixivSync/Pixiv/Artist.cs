@@ -2,13 +2,12 @@
 
 namespace PixivSync.Pixiv;
 
-public class Artist
+public class Artist : User
 {
-    public virtual long Id { get; init; }
-    public virtual string Name { get; set; }
+    public string Name { get; set; }
     public virtual ICollection<Illust> Illusts { get; protected set; }
 
-    public virtual string NormalizedName
+    public string NormalizedName
     {
         get
         {
