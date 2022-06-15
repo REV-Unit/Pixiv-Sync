@@ -8,7 +8,7 @@ public class Artist
     public virtual string Name { get; set; }
     public virtual ICollection<Illust> Illusts { get; protected set; }
 
-    public string NormalizedName
+    public virtual string NormalizedName
     {
         get
         {

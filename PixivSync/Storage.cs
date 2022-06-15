@@ -59,7 +59,7 @@ public class Storage
     {
         Log.Information("准备发送下载到 Aria2");
         var aria2 = new Aria2();
-        foreach (Illust illust in illusts)
+        foreach (Illust illust in illusts.Where(illust => !illust.Deleted))
         {
             foreach (Page illustPage in illust.Pages!)
             {

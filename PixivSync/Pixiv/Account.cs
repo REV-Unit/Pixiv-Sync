@@ -22,7 +22,7 @@ public static class Account
             bag.Add(resp2.body.works);
         });
         IllustBookmarkInfo[] result = bag.SelectMany(l => l).ToArray();
-        Log.Information("获取完毕");
+        Log.Information("获取到 {Count} 项", result.Length);
         return result;
     }
 }
