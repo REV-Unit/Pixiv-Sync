@@ -20,7 +20,7 @@ public class Illust
     public virtual RestrictType RestrictType { get; set; }
     public virtual DateTime CreateDate { get; set; }
     public virtual DateTime UploadDate { get; set; }
-    public virtual IList<Page> Pages { get; set; }
+    public virtual IList<Page>? Pages { get; set; }
     public virtual bool Deleted { get; set; }
 
     public static async Task<Illust[]> FromBookmarkInfo(IEnumerable<IllustBookmarkInfo> bookmarks)

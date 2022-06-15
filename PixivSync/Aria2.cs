@@ -26,6 +26,9 @@ public record AddUriParams
     [JsonPropertyName("condictional-get")] public bool CondictionalGet { get; set; }
 
     [JsonPropertyName("retry-wait")] public int RetryWait { get; set; }
+
+    [JsonPropertyName("max-connection-per-server")]
+    public int MaxConnection { get; set; }
 }
 
 [Headers("Content-Type: application/json;charset=UTF-8")]

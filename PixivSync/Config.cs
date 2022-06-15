@@ -15,4 +15,5 @@ public static class Config
     public static long MainAccountId => long.Parse(Default["Auth:Id"]);
     public static string AuxAccountCookie => Default["Download:Cookie"] ?? MainAccountCookie;
     public static string DbPath => Default["Database:Path"];
+    public static string StorageRoot => Default["Download:Root"];
 }

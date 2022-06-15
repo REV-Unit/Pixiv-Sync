@@ -3,8 +3,6 @@
 public class Page
 {
     public virtual PageId Id { get; init; }
-    //public virtual Illust Illust { get; set; }
-
     public virtual int Width { get; set; }
     public virtual int Height { get; set; }
     public virtual string ThumbMini { get; set; }
