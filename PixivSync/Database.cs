@@ -21,6 +21,7 @@ public static class Database
                 mappings.FluentMappings
                     .AddFromAssembly(Assembly.GetExecutingAssembly())
                     .Conventions.Add(ForeignKey.EndsWith("Id"), DefaultLazy.Never()))
+            .ExposeConfiguration(UpdateSchema)
             .BuildSessionFactory();
     }
 

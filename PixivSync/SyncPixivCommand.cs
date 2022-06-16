@@ -20,10 +20,7 @@ public sealed class SyncPixivCommand : AsyncCommand<SyncPixivCommand.Settings>
 
         Illust[] illusts = await Illust.FromBookmarkInfo(bookmarkInfos).ToArrayAsync();
 
-        if (settings.Merge)
-            await Database.Merge(illusts.ToAsyncEnumerable());
-        else
-            await Database.Add(illusts.ToAsyncEnumerable());
+        await Database.Merge(illusts.ToAsyncEnumerable());
 
         var storage = Storage.Default;
         storage.ResolveArtistNameChanges(); // Resolve before download to avoid duplicates
