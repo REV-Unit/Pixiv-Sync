@@ -1,19 +1,56 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.IO;
+using Microsoft.Extensions.Configuration;
+using NetEscapades.Configuration.Yaml;
+using Serilog.Events;
+using YamlDotNet.Serialization;
 
 namespace PixivSync;
 
-public static class Config
+public class Config
 {
     public const string FilePath = "config.yml";
 
-    public static IConfiguration Default { get; } = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory)
+    private static readonly IConfiguration Configuration = new ConfigurationBuilder()
+        .SetBasePath(AppContext.BaseDirectory)
         .AddYamlFile(FilePath)
         //.AddCommandLine(args) https://github.com/dotnet/runtime/issues/36024
         .Build();
 
-    public static string MainAccountCookie => Default["Auth:Cookie"];
-    public static long MainAccountId => long.Parse(Default["Auth:Id"]);
-    public static string AuxAccountCookie => Default["Download:Cookie"] ?? MainAccountCookie;
-    public static string DbPath => Default["Database:Path"];
-    public static string StorageRoot => Default["Download:Root"];
+    static Config()
+    {
+        // using (StreamReader reader = File.OpenText(FilePath))
+        // {
+        //     new Deserializer().Deserialize<Config>(reader);
+        // }
+        
+        Configuration.Bind(Default);
+    }
+
+    public static Config Default { get; } = new();
+
+    public LogSettings Log { get; set; } = new();
+
+    public AuthSettings Auth { get; set; } = new();
+
+    public string StoragePath { get; set; }
+    public string DbPath { get; set; }
+
+    public class LogSettings
+    {
+        public string Path { get; set; }
+        public LogEventLevel Level { get; set; }
+    }
+
+    public class AuthSettings
+    {
+        private string _auxCookie;
+        public long Id { get; set; }
+        public string Cookie { get; set; }
+
+        public string AuxCookie
+        {
+            get => _auxCookie ?? Cookie;
+            set => _auxCookie = value;
+        }
+    }
 }

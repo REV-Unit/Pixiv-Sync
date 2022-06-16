@@ -13,7 +13,7 @@ namespace PixivSync;
 public static class Database
 {
     public static ISessionFactory SessionFactory { get; } = Fluently.Configure()
-        .Database(SQLiteConfiguration.Standard.UsingFile(Config.DbPath))
+        .Database(SQLiteConfiguration.Standard.UsingFile(Config.Default.DbPath))
         .Mappings(mappings =>
             mappings.FluentMappings
                 .AddFromAssembly(Assembly.GetExecutingAssembly())

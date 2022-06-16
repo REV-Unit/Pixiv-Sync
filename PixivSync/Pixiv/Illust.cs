@@ -41,7 +41,7 @@ public class Illust
         List<PageInfo> pages;
         try
         {
-            string? cookie = bookmarkInfo.xRestrict == 1 ? Config.AuxAccountCookie : null;
+            string? cookie = bookmarkInfo.xRestrict == 1 ? Config.Default.Auth.AuxCookie : null;
             IAsyncPolicy retryPolicy = Policy.Handle<HttpRequestException>().RetryAsync(3);
             illustInfo = (await retryPolicy.ExecuteAsync(() =>
                 pixivApi.GetIllustInfo(illustId, cookie))).body;

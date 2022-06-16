@@ -17,7 +17,7 @@ public class Storage
     }
 
     public DirectoryInfo Root { get; set; }
-    public static Storage Default { get; } = new(Config.StorageRoot);
+    public static Storage Default { get; } = new(Config.Default.StoragePath);
 
     public void ResolveArtistNameChanges()
     {
@@ -81,7 +81,7 @@ public class Storage
                     {
                         SaveDir = saveDir,
                         Referer = "https://www.pixiv.net",
-                        Cookie = Config.AuxAccountCookie,
+                        Cookie = Config.Default.Auth.AuxCookie,
                         CondictionalGet = true,
                         AutoFileRenaming = true,
                         RetryWait = 5,
