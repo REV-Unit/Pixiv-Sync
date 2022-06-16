@@ -55,7 +55,7 @@ public class Storage
         }
     }
 
-    public async Task BeginSaveIllust(IEnumerable<Illust> illusts)
+    public async Task BeginDownload(IEnumerable<Illust> illusts)
     {
         Log.Information("准备发送下载到 Aria2");
         var aria2 = new Aria2();

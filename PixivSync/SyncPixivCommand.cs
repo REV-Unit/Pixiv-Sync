@@ -1,7 +1,6 @@
 ﻿using NHibernate;
 using PixivSync.Pixiv;
 using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
-using Serilog;
 using Spectre.Console.Cli;
 
 namespace PixivSync;
@@ -14,26 +13,20 @@ public sealed class SyncPixivCommand : AsyncCommand<SyncPixivCommand.Settings>
 
         var user = new User { Id = config.Auth.Id, Cookie = config.Auth.Cookie };
 
-        IllustBookmarkInfo[] bookmarkInfos = settings.Migrate
-            ? await user.GetAllBookmarks()
-            : await user.GetAddedBookmarks();
+        IAsyncEnumerable<IllustBookmarkInfo> bookmarkInfos = settings.Migrate
+            ? (await user.GetAllBookmarks()).ToAsyncEnumerable()
+            : user.GetAddedBookmarks();
 
-        if (bookmarkInfos.Length == 0)
-        {
-            Log.Information("不进行操作");
-            return 1;
-        }
-
-        Illust[] illusts = await Illust.FromBookmarkInfo(bookmarkInfos);
+        IAsyncEnumerable<Illust> illusts = Illust.FromBookmarkInfo(bookmarkInfos);
         await Database.Merge(illusts);
 
         var storage = Storage.Default;
-        storage.ResolveArtistNameChanges();
+        storage.ResolveArtistNameChanges(); // Resolve before download to avoid duplicates
 
         using (ISession session = Database.SessionFactory.OpenSession())
         {
             IQueryable<Illust> availableIllusts = session.Query<Illust>();
-            await storage.BeginSaveIllust(availableIllusts);
+            await storage.BeginDownload(availableIllusts);
         }
 
         return 0;

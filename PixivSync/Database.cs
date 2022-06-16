@@ -28,12 +28,12 @@ public static class Database
         Log.Information("更新完毕");
     }
 
-    public static async Task Merge(IEnumerable<Illust> illusts)
+    public static async Task Merge(IAsyncEnumerable<Illust> illusts)
     {
         Log.Information("合并到数据库");
         using ISession session = SessionFactory.OpenSession();
         using ITransaction transaction = session.BeginTransaction();
-        foreach (Illust illust in illusts)
+        await foreach (Illust illust in illusts)
         {
             var oldInfo = session.Get<Illust>(illust.Id);
             if (oldInfo != null && illust.Deleted)

@@ -56,14 +56,10 @@ public class User
         } while (offset < total);
     }
 
-    public async Task<IllustBookmarkInfo[]> GetAddedBookmarks()
+    public IAsyncEnumerable<IllustBookmarkInfo> GetAddedBookmarks()
     {
         using ISession session = Database.SessionFactory.OpenSession();
         HashSet<long> ids = session.Query<Illust>().Select(illust => illust.Id).ToHashSet();
-        IllustBookmarkInfo[] delta = await EnumerateBookmarks()
-            .TakeWhile(bookmarkInfo => !ids.Contains(Convert.ToInt64(bookmarkInfo.id)))
-            .ToArrayAsync();
-        Log.Information("Delta {Delta} 个插画", delta.Length);
-        return delta;
+        return EnumerateBookmarks().TakeWhile(bookmarkInfo => !ids.Contains(Convert.ToInt64(bookmarkInfo.id)));
     }
 }

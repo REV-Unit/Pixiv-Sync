@@ -22,14 +22,18 @@ public class Illust
     public virtual IList<Page>? Pages { get; set; }
     public bool Deleted { get; set; }
 
-    public static async Task<Illust[]> FromBookmarkInfo(IEnumerable<IllustBookmarkInfo> bookmarks)
+    public static async IAsyncEnumerable<Illust> FromBookmarkInfo(IAsyncEnumerable<IllustBookmarkInfo> bookmarks)
     {
         Log.Information("从 Pixiv 获取详细信息中");
-        IEnumerable<Task<Illust>> tasks = bookmarks.Select(FromBookmarkInfo);
-        await Task.WhenAll(tasks);
-        Illust[] result = tasks.Select(t => t.Result).ToArray();
+        List<Task<Illust>> tasks = await bookmarks.Select(FromBookmarkInfo).ToListAsync();
+        while (tasks.Any())
+        {
+            Task<Illust> task = await Task.WhenAny(tasks);
+            yield return task.Result;
+            tasks.Remove(task);
+        }
+
         Log.Information("获取完毕");
-        return result;
     }
 
     public static async Task<Illust> FromBookmarkInfo(IllustBookmarkInfo bookmarkInfo)
