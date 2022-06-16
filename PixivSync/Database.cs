@@ -12,14 +12,19 @@ namespace PixivSync;
 
 public static class Database
 {
-    public static ISessionFactory SessionFactory { get; } = Fluently.Configure()
-        .Database(SQLiteConfiguration.Standard.UsingFile(Config.Default.DbPath))
-        .Mappings(mappings =>
-            mappings.FluentMappings
-                .AddFromAssembly(Assembly.GetExecutingAssembly())
-                .Conventions.Add(ForeignKey.EndsWith("Id"), DefaultLazy.Never()))
-        .ExposeConfiguration(UpdateSchema)
-        .BuildSessionFactory();
+    static Database()
+    {
+        ConfigurationProvider.Current = null; // https://github.com/nhibernate/fluent-nhibernate/discussions/531
+        SessionFactory = Fluently.Configure()
+            .Database(SQLiteConfiguration.Standard.UsingFile(Config.Default.DbPath))
+            .Mappings(mappings =>
+                mappings.FluentMappings
+                    .AddFromAssembly(Assembly.GetExecutingAssembly())
+                    .Conventions.Add(ForeignKey.EndsWith("Id"), DefaultLazy.Never()))
+            .BuildSessionFactory();
+    }
+
+    public static ISessionFactory SessionFactory { get; }
 
     private static void UpdateSchema(Configuration cfg)
     {
