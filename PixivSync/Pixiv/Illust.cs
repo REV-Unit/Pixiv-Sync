@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
 using PixivSync.Pixiv.ApiResponse.GetIllustInfoResponse;
@@ -26,9 +25,9 @@ public class Illust
     public static async Task<Illust[]> FromBookmarkInfo(IEnumerable<IllustBookmarkInfo> bookmarks)
     {
         Log.Information("从 Pixiv 获取详细信息中");
-        var bag = new ConcurrentBag<Illust>();
-        await Parallel.ForEachAsync(bookmarks, async (bookmark, _) => bag.Add(await FromBookmarkInfo(bookmark)));
-        Illust[] result = bag.ToArray();
+        IEnumerable<Task<Illust>> tasks = bookmarks.Select(FromBookmarkInfo);
+        await Task.WhenAll(tasks);
+        Illust[] result = tasks.Select(t => t.Result).ToArray();
         Log.Information("获取完毕");
         return result;
     }
