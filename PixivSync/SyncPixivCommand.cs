@@ -1,5 +1,6 @@
 ﻿using PixivSync.Pixiv;
 using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
+using Serilog;
 using Spectre.Console.Cli;
 
 namespace PixivSync;
@@ -8,6 +9,7 @@ public sealed class SyncPixivCommand : AsyncCommand<SyncPixivCommand.Settings>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
+        Log.Information("开始同步");
         var config = Config.Default;
 
         var user = new User { Id = config.Auth.Id, Cookie = config.Auth.Cookie };
@@ -28,6 +30,7 @@ public sealed class SyncPixivCommand : AsyncCommand<SyncPixivCommand.Settings>
 
         await storage.BeginDownload(illusts.ToAsyncEnumerable());
 
+        Log.Information("已完成同步");
         return 0;
     }
 

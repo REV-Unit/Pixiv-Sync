@@ -1,5 +1,4 @@
-﻿using System.IO;
-using PixivSync;
+﻿using PixivSync;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using Spectre.Console.Cli;
@@ -17,7 +16,7 @@ static void ConfigureLogger()
     string? logDir = config.Log.Dir;
     if (!string.IsNullOrWhiteSpace(logDir))
     {
-        string logPath = Path.Join(logDir, $"{DateTime.Now:yyyy-MM-dd HH.mm.ss}");
+        string logPath = Path.Join(logDir, $"{DateTime.Now:yyyy-MM-dd HH.mm.ss}.log");
         conf = conf.WriteTo.File(logPath, config.Log.Level);
     }
 
@@ -25,6 +24,15 @@ static void ConfigureLogger()
 }
 
 ConfigureLogger();
+
+static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+{
+    var exception = (Exception)e.ExceptionObject;
+    Log.Fatal(exception, "未知异常，正在退出程序");
+}
+
+AppDomain appDomain = AppDomain.CurrentDomain;
+appDomain.UnhandledException += OnUnhandledException;
 
 var app = new CommandApp<SyncPixivCommand>();
 return await app.RunAsync(args);

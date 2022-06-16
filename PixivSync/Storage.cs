@@ -1,5 +1,4 @@
-﻿using System.IO;
-using NHibernate;
+﻿using NHibernate;
 using PixivSync.Pixiv;
 using Serilog;
 

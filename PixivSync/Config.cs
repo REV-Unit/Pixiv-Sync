@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Serilog.Events;
+﻿using Serilog.Events;
 using YamlDotNet.Serialization;
 
 namespace PixivSync;

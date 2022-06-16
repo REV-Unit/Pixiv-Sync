@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http;
 using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
 using PixivSync.Pixiv.ApiResponse.GetIllustInfoResponse;
 using PixivSync.Pixiv.ApiResponse.GetIllustPagesResponse;
