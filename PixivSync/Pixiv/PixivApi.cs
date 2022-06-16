@@ -10,10 +10,11 @@ namespace PixivSync.Pixiv;
     "Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6")]
 public interface IPixivApi
 {
-    [Get("/ajax/user/{uid}/illusts/bookmarks?tag=&rest=hide")]
+    [Get("/ajax/user/{uid}/illusts/bookmarks?tag=")]
     Task<GetBookmarksResponse> GetBookmarks(long uid,
         [Query] int offset,
         [Query] int limit,
+        [AliasAs("rest")] [Query] string restrictType,
         [Header("Cookie")] string? cookie = null
     );
 
@@ -27,4 +28,9 @@ public interface IPixivApi
 public static class PixivApi
 {
     public static IPixivApi Default { get; set; } = RestService.For<IPixivApi>("https://www.pixiv.net");
+
+    public static string BookmarkRestrictType(bool @private)
+    {
+        return @private ? "hide" : "show";
+    }
 }

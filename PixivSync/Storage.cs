@@ -95,9 +95,6 @@ public class Storage
             }
         }
 
-        if (sentCount != 0)
-            Log.Information("已发送下载 {Sent} 个，跳过 {Skip} 个", sentCount, skippedCount);
-        else
-            Log.Information("未发送任何下载，跳过 {Skip} 个", skippedCount);
+        Log.Information("已发送下载 {Sent} 个，跳过 {Skip} 个", sentCount, skippedCount);
     }
 }

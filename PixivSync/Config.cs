@@ -28,6 +28,7 @@ public class Config
 
     public string StoragePath { get; set; } = string.Empty;
     public string DbPath { get; set; } = string.Empty;
+    public bool UsePrivateBookmarks { get; set; }
 
     public class LogSettings
     {

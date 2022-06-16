@@ -12,6 +12,8 @@ static void ConfigureLogger()
     LoggerConfiguration conf = new LoggerConfiguration()
         .MinimumLevel.Debug()
         .WriteTo.Console(theme: AnsiConsoleTheme.Code);
+
+#if !DEBUG
     var config = Config.Default;
     string? logDir = config.Log.Dir;
     if (!string.IsNullOrWhiteSpace(logDir))
@@ -19,6 +21,7 @@ static void ConfigureLogger()
         string logPath = Path.Join(logDir, $"{DateTime.Now:yyyy-MM-dd HH.mm.ss}.log");
         conf = conf.WriteTo.File(logPath, config.Log.Level);
     }
+#endif
 
     Log.Logger = conf.CreateLogger();
 }

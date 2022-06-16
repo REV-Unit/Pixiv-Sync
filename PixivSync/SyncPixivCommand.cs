@@ -15,8 +15,8 @@ public sealed class SyncPixivCommand : AsyncCommand<SyncPixivCommand.Settings>
         var user = new User { Id = config.Auth.Id, Cookie = config.Auth.Cookie };
 
         IAsyncEnumerable<IllustBookmarkInfo> bookmarkInfos = settings.Merge
-            ? (await user.GetAllBookmarks()).ToAsyncEnumerable()
-            : user.GetAddedBookmarks();
+            ? (await user.GetAllBookmarks(config.UsePrivateBookmarks)).ToAsyncEnumerable()
+            : user.GetAddedBookmarks(config.UsePrivateBookmarks);
 
         Illust[] illusts = await Illust.FromBookmarkInfo(bookmarkInfos).ToArrayAsync();
 

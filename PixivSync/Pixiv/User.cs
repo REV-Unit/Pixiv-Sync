@@ -14,18 +14,26 @@ public class User
         return (x + y - 1) / y;
     }
 
-    public async Task<IllustBookmarkInfo[]> GetAllBookmarks()
+    public async Task<IllustBookmarkInfo[]> GetAllBookmarks(bool @private)
     {
         Log.Information("开始获取所有收藏");
         IPixivApi pixivApi = PixivApi.Default;
 
-        List<Task<GetBookmarksResponse>> getBookmarksTasks = new() { pixivApi.GetBookmarks(Id, 0, 100, Cookie) };
+        string? cookie = @private ? Cookie : null;
+
+        Task<GetBookmarksResponse> GetBookmarks(int offset)
+        {
+            return pixivApi.GetBookmarks(Id, offset, 100, PixivApi.BookmarkRestrictType(@private),
+                cookie);
+        }
+
+        List<Task<GetBookmarksResponse>> getBookmarksTasks = new() { GetBookmarks(0) };
         GetBookmarksResponse resp1 = await getBookmarksTasks[0];
         int total = resp1.body.total;
 
         for (var i = 1; i < DivideCeiling(total, 100); i++)
         {
-            getBookmarksTasks.Add(pixivApi.GetBookmarks(Id, i * 100, 100, Cookie));
+            getBookmarksTasks.Add(GetBookmarks(i * 100));
         }
 
         await Task.WhenAll(getBookmarksTasks);
@@ -34,15 +42,15 @@ public class User
         return result;
     }
 
-    public IAsyncEnumerable<IllustBookmarkInfo> GetAddedBookmarks()
+    public IAsyncEnumerable<IllustBookmarkInfo> GetAddedBookmarks(bool @private)
     {
         Log.Information("开始获取添加的收藏");
         using ISession session = Database.SessionFactory.OpenSession();
         HashSet<long> ids = session.Query<Illust>().Select(illust => illust.Id).ToHashSet();
-        return EnumerateBookmarks().TakeWhile(bookmarkInfo => !ids.Contains(Convert.ToInt64(bookmarkInfo.id)));
+        return EnumerateBookmarks(@private).TakeWhile(bookmarkInfo => !ids.Contains(Convert.ToInt64(bookmarkInfo.id)));
     }
 
-    public async IAsyncEnumerable<IllustBookmarkInfo> EnumerateBookmarks()
+    public async IAsyncEnumerable<IllustBookmarkInfo> EnumerateBookmarks(bool @private)
     {
         Log.Information("开始枚举收藏");
         IPixivApi pixivApi = PixivApi.Default;
@@ -52,7 +60,7 @@ public class User
         do
         {
             GetBookmarksResponse resp =
-                await pixivApi.GetBookmarks(Id, 0, 100, Cookie);
+                await pixivApi.GetBookmarks(Id, offset, 100, PixivApi.BookmarkRestrictType(@private), Cookie);
             total = resp.body.total;
 
             foreach (IllustBookmarkInfo bookmarkInfo in resp.body.works)
