@@ -1,6 +1,4 @@
 ﻿using System.IO;
-using Microsoft.Extensions.Configuration;
-using NetEscapades.Configuration.Yaml;
 using Serilog.Events;
 using YamlDotNet.Serialization;
 
@@ -8,44 +6,41 @@ namespace PixivSync;
 
 public class Config
 {
-    public const string FilePath = "config.yml";
-
-    private static readonly IConfiguration Configuration = new ConfigurationBuilder()
-        .SetBasePath(AppContext.BaseDirectory)
-        .AddYamlFile(FilePath)
-        //.AddCommandLine(args) https://github.com/dotnet/runtime/issues/36024
-        .Build();
+    private const string FilePath = "config.yml";
 
     static Config()
     {
-        // using (StreamReader reader = File.OpenText(FilePath))
-        // {
-        //     new Deserializer().Deserialize<Config>(reader);
-        // }
-        
-        Configuration.Bind(Default);
+        if (!File.Exists(FilePath))
+        {
+            using var write = new StreamWriter(FilePath);
+            new Serializer().Serialize(write, new Config());
+            throw new Exception("Config does not exist, created example config.");
+        }
+
+        using StreamReader reader = File.OpenText(FilePath);
+        Default = new Deserializer().Deserialize<Config>(reader);
     }
 
-    public static Config Default { get; } = new();
+    public static Config Default { get; }
 
     public LogSettings Log { get; set; } = new();
 
     public AuthSettings Auth { get; set; } = new();
 
-    public string StoragePath { get; set; }
-    public string DbPath { get; set; }
+    public string StoragePath { get; set; } = string.Empty;
+    public string DbPath { get; set; } = string.Empty;
 
     public class LogSettings
     {
-        public string Path { get; set; }
-        public LogEventLevel Level { get; set; }
+        public string? Path { get; set; }
+        public LogEventLevel Level { get; set; } = LogEventLevel.Information;
     }
 
     public class AuthSettings
     {
-        private string _auxCookie;
-        public long Id { get; set; }
-        public string Cookie { get; set; }
+        private string? _auxCookie;
+        public long Id { get; set; } = 114514;
+        public string Cookie { get; set; } = "PHPSESSID=xxxxxx";
 
         public string AuxCookie
         {
