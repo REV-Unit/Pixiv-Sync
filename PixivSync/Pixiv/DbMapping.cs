@@ -22,6 +22,7 @@ public class IllustMap : ClassMap<Illust>
         Map(x => x.Description);
         HasManyToMany(x => x.Tags).Cascade.All().Table("IllustTag").LazyLoad();
         Map(x => x.RestrictType);
+        Map(x => x.Type);
         Map(x => x.CreateDate);
         Map(x => x.UploadDate);
         HasMany(x => x.Pages).Cascade.All().LazyLoad();

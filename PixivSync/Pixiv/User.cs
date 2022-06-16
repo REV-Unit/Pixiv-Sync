@@ -16,7 +16,7 @@ public class User
 
     public async Task<IllustBookmarkInfo[]> GetAllBookmarks()
     {
-        Log.Information("获取所有收藏中");
+        Log.Information("开始获取所有收藏");
         IPixivApi pixivApi = PixivApi.Default;
 
         List<Task<GetBookmarksResponse>> getBookmarksTasks = new() { pixivApi.GetBookmarks(Id, 0, 100, Cookie) };
@@ -34,9 +34,17 @@ public class User
         return result;
     }
 
+    public IAsyncEnumerable<IllustBookmarkInfo> GetAddedBookmarks()
+    {
+        Log.Information("开始获取添加的收藏");
+        using ISession session = Database.SessionFactory.OpenSession();
+        HashSet<long> ids = session.Query<Illust>().Select(illust => illust.Id).ToHashSet();
+        return EnumerateBookmarks().TakeWhile(bookmarkInfo => !ids.Contains(Convert.ToInt64(bookmarkInfo.id)));
+    }
+
     public async IAsyncEnumerable<IllustBookmarkInfo> EnumerateBookmarks()
     {
-        Log.Information("枚举收藏中");
+        Log.Information("开始枚举收藏");
         IPixivApi pixivApi = PixivApi.Default;
 
         int total;
@@ -54,12 +62,5 @@ public class User
 
             offset += resp.body.works.Count;
         } while (offset < total);
-    }
-
-    public IAsyncEnumerable<IllustBookmarkInfo> GetAddedBookmarks()
-    {
-        using ISession session = Database.SessionFactory.OpenSession();
-        HashSet<long> ids = session.Query<Illust>().Select(illust => illust.Id).ToHashSet();
-        return EnumerateBookmarks().TakeWhile(bookmarkInfo => !ids.Contains(Convert.ToInt64(bookmarkInfo.id)));
     }
 }

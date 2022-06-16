@@ -17,23 +17,43 @@ public class Illust
     public string? Description { get; set; }
     public virtual ISet<Tag>? Tags { get; set; }
     public RestrictType RestrictType { get; set; }
+    public IllustType Type { get; set; }
     public DateTime CreateDate { get; set; }
     public DateTime UploadDate { get; set; }
     public virtual IList<Page>? Pages { get; set; }
     public bool Deleted { get; set; }
 
-    public static async IAsyncEnumerable<Illust> FromBookmarkInfo(IAsyncEnumerable<IllustBookmarkInfo> bookmarks)
+    public static async IAsyncEnumerable<TResult> ParallelSelectAsync<T, TResult>(IAsyncEnumerable<T> sequence,
+        int maximumConcurrency, Func<T, Task<TResult>> func)
     {
-        Log.Information("从 Pixiv 获取详细信息中");
-        List<Task<Illust>> tasks = await bookmarks.Select(FromBookmarkInfo).ToListAsync();
+        using var semaphore = new SemaphoreSlim(maximumConcurrency);
+
+        static async Task<TResult> Limiter(T param, Func<T, Task<TResult>> func, SemaphoreSlim semaphore)
+        {
+            TResult result = await func(param);
+            semaphore.Release();
+            return result;
+        }
+
+        var tasks = new List<Task<TResult>>();
+        await foreach (T item in sequence)
+        {
+            await semaphore.WaitAsync();
+            tasks.Add(Limiter(item, func, semaphore));
+        }
+
         while (tasks.Any())
         {
-            Task<Illust> task = await Task.WhenAny(tasks);
+            Task<TResult> task = await Task.WhenAny(tasks);
             yield return task.Result;
             tasks.Remove(task);
         }
+    }
 
-        Log.Information("获取完毕");
+    public static IAsyncEnumerable<Illust> FromBookmarkInfo(IAsyncEnumerable<IllustBookmarkInfo> bookmarks)
+    {
+        Log.Information("开始获取插画详细信息");
+        return ParallelSelectAsync(bookmarks, 50, FromBookmarkInfo);
     }
 
     public static async Task<Illust> FromBookmarkInfo(IllustBookmarkInfo bookmarkInfo)
@@ -55,7 +75,6 @@ public class Illust
         {
             if (e.StatusCode != HttpStatusCode.NotFound) throw;
 
-            Log.Warning($"PID {illustId} 已被删除");
             return new Illust
             {
                 Id = illustId,
@@ -85,6 +104,7 @@ public class Illust
                 { xRestrict: 1 } => RestrictType.R18,
                 _ => RestrictType.None
             },
+            Type = (IllustType)illustInfo.illustType,
             CreateDate = illustInfo.createDate,
             UploadDate = illustInfo.uploadDate,
             Tags = illustInfo.tags.tags.Select(t => new Tag
@@ -112,4 +132,11 @@ public enum RestrictType
     None,
     Sensitive,
     R18
+}
+
+public enum IllustType
+{
+    Illustration,
+    Manga,
+    Ugoira
 }

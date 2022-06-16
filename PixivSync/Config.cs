@@ -14,7 +14,7 @@ public class Config
         {
             using var write = new StreamWriter(FilePath);
             new Serializer().Serialize(write, new Config());
-            throw new Exception("Config does not exist, created example config.");
+            throw new Exception("未找到配置文件，已创建配置文件模板");
         }
 
         using StreamReader reader = File.OpenText(FilePath);

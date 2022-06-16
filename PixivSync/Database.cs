@@ -28,20 +28,34 @@ public static class Database
         Log.Information("更新完毕");
     }
 
-    public static async Task Merge(IAsyncEnumerable<Illust> illusts)
+    public static async Task Add(IAsyncEnumerable<Illust> illusts)
     {
-        Log.Information("合并到数据库");
+        Log.Information("开始添加到数据库");
         using ISession session = SessionFactory.OpenSession();
         using ITransaction transaction = session.BeginTransaction();
         await foreach (Illust illust in illusts)
         {
-            var oldInfo = session.Get<Illust>(illust.Id);
-            if (oldInfo != null && illust.Deleted)
+            await session.SaveAsync(illust);
+        }
+
+        await transaction.CommitAsync();
+        Log.Information("添加完毕");
+    }
+
+    public static async Task Merge(IAsyncEnumerable<Illust> illusts)
+    {
+        Log.Information("开始合并到数据库");
+        using ISession session = SessionFactory.OpenSession();
+        using ITransaction transaction = session.BeginTransaction();
+        await foreach (Illust illust in illusts)
+        {
+            if (illust.Deleted && await session.GetAsync<Illust>(illust.Id) != null)
             {
+                Log.Debug("PID {PID} 已被删除且数据库里已存在，跳过合并", illust.Id);
                 continue;
             }
 
-            session.Merge(illust);
+            await session.MergeAsync(illust);
         }
 
         await transaction.CommitAsync();

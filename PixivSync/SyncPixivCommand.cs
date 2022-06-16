@@ -1,5 +1,4 @@
-﻿using NHibernate;
-using PixivSync.Pixiv;
+﻿using PixivSync.Pixiv;
 using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
 using Spectre.Console.Cli;
 
@@ -13,27 +12,27 @@ public sealed class SyncPixivCommand : AsyncCommand<SyncPixivCommand.Settings>
 
         var user = new User { Id = config.Auth.Id, Cookie = config.Auth.Cookie };
 
-        IAsyncEnumerable<IllustBookmarkInfo> bookmarkInfos = settings.Migrate
+        IAsyncEnumerable<IllustBookmarkInfo> bookmarkInfos = settings.Merge
             ? (await user.GetAllBookmarks()).ToAsyncEnumerable()
             : user.GetAddedBookmarks();
 
-        IAsyncEnumerable<Illust> illusts = Illust.FromBookmarkInfo(bookmarkInfos);
-        await Database.Merge(illusts);
+        Illust[] illusts = await Illust.FromBookmarkInfo(bookmarkInfos).ToArrayAsync();
+
+        if (settings.Merge)
+            await Database.Merge(illusts.ToAsyncEnumerable());
+        else
+            await Database.Add(illusts.ToAsyncEnumerable());
 
         var storage = Storage.Default;
         storage.ResolveArtistNameChanges(); // Resolve before download to avoid duplicates
 
-        using (ISession session = Database.SessionFactory.OpenSession())
-        {
-            IQueryable<Illust> availableIllusts = session.Query<Illust>();
-            await storage.BeginDownload(availableIllusts);
-        }
+        await storage.BeginDownload(illusts.ToAsyncEnumerable());
 
         return 0;
     }
 
     public sealed class Settings : CommandSettings
     {
-        [CommandOption("-m|--migrate")] public bool Migrate { get; init; }
+        [CommandOption("-m|--merge")] public bool Merge { get; init; }
     }
 }

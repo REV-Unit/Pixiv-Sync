@@ -55,26 +55,31 @@ public class Storage
         }
     }
 
-    public async Task BeginDownload(IEnumerable<Illust> illusts)
+    public async Task BeginDownload(IAsyncEnumerable<Illust> illusts)
     {
-        Log.Information("准备发送下载到 Aria2");
+        Log.Information("开始发送下载到 Aria2");
         var aria2 = new Aria2();
-        foreach (Illust illust in illusts.Where(illust => !illust.Deleted))
+        int sentCount = 0, skippedCount = 0;
+
+        await foreach (Illust illust in illusts.Where(illust => !illust.Deleted))
         {
             foreach (Page illustPage in illust.Pages!)
             {
+                string fileName = new Uri(illustPage.Original).Segments.Last();
+                string pageName = Path.GetFileNameWithoutExtension(fileName);
+
                 string saveDir = new DirectoryInfo(Path.Combine(Root.FullName,
                     $"{illust.Artist?.NormalizedName}_{illust.Artist?.Id ?? 0}")).FullName;
-                string fileName = new Uri(illustPage.Original).Segments.Last();
                 var fileInfo = new FileInfo(Path.Join(saveDir, fileName));
 
                 if (fileInfo.Exists)
                 {
-                    Log.Verbose("跳过 PID {PID}：已有同名文件", illust.Id);
+                    Log.Information("跳过 {PageName}：已有同名文件", pageName);
+                    skippedCount++;
                     continue;
                 }
 
-                Log.Information("Aria2 添加 {PID}", illust.Id);
+                Log.Information("发送下载 {PageName}", pageName);
 
                 await aria2.AddUri(illustPage.Original,
                     new AddUriParams
@@ -87,9 +92,13 @@ public class Storage
                         RetryWait = 5,
                         MaxConnection = 1
                     });
+                sentCount++;
             }
         }
 
-        Log.Information("已全部发送");
+        if (sentCount != 0)
+            Log.Information("已发送下载 {Sent} 个，跳过 {Skip} 个", sentCount, skippedCount);
+        else
+            Log.Information("未发送任何下载，跳过 {Skip} 个", skippedCount);
     }
 }
