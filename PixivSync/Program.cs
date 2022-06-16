@@ -36,4 +36,5 @@ AppDomain appDomain = AppDomain.CurrentDomain;
 appDomain.UnhandledException += OnUnhandledException;
 
 var app = new CommandApp<SyncPixivCommand>();
+app.Configure(c => c.PropagateExceptions());
 return await app.RunAsync(args);
