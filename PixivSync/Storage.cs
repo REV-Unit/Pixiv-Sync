@@ -61,7 +61,7 @@ public class Storage
         var aria2 = new Aria2();
         int sentCount = 0, skippedCount = 0;
 
-        await foreach (Illust illust in illusts.Where(illust => !illust.Deleted))
+        await foreach (Illust illust in illusts.Where(illust => !illust.Deleted && illust.Type != IllustType.Ugoira))
         {
             foreach (Page illustPage in illust.Pages!)
             {
