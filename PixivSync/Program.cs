@@ -1,4 +1,5 @@
-﻿using PixivSync;
+﻿using System.IO;
+using PixivSync;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using Spectre.Console.Cli;
@@ -9,16 +10,18 @@ Environment.SetEnvironmentVariable("HTTPS_PROXY", string.Empty);
 
 static void ConfigureLogger()
 {
-    LoggerConfiguration loggerConfiguration = new LoggerConfiguration()
+    LoggerConfiguration conf = new LoggerConfiguration()
         .MinimumLevel.Debug()
         .WriteTo.Console(theme: AnsiConsoleTheme.Code);
     var config = Config.Default;
-    if (!string.IsNullOrWhiteSpace(config.Log.Path))
+    string? logDir = config.Log.Dir;
+    if (!string.IsNullOrWhiteSpace(logDir))
     {
-        loggerConfiguration = loggerConfiguration.WriteTo.File(config.Log.Path, config.Log.Level);
+        string logPath = Path.Join(logDir, $"{DateTime.Now:yyyy-MM-dd HH.mm.ss}");
+        conf = conf.WriteTo.File(logPath, config.Log.Level);
     }
 
-    Log.Logger = loggerConfiguration.CreateLogger();
+    Log.Logger = conf.CreateLogger();
 }
 
 ConfigureLogger();

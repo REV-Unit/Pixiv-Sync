@@ -32,7 +32,7 @@ public class Config
 
     public class LogSettings
     {
-        public string? Path { get; set; }
+        public string? Dir { get; set; }
         public LogEventLevel Level { get; set; } = LogEventLevel.Information;
     }
 
