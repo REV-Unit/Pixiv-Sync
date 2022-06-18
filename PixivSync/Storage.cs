@@ -4,7 +4,7 @@ using Serilog;
 
 namespace PixivSync;
 
-public class Storage
+public sealed class Storage
 {
     public Storage(string storageRootPath)
     {

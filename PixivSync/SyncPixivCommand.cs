@@ -1,10 +1,12 @@
-﻿using PixivSync.Pixiv;
+﻿using JetBrains.Annotations;
+using PixivSync.Pixiv;
 using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
 using Serilog;
 using Spectre.Console.Cli;
 
 namespace PixivSync;
 
+[UsedImplicitly(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature)]
 public sealed class SyncPixivCommand : AsyncCommand<SyncPixivCommand.Settings>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
@@ -31,6 +33,7 @@ public sealed class SyncPixivCommand : AsyncCommand<SyncPixivCommand.Settings>
         return 0;
     }
 
+    [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
     public sealed class Settings : CommandSettings
     {
         [CommandOption("-m|--merge")] public bool Merge { get; init; }

@@ -2,7 +2,7 @@
 
 namespace PixivSync.Pixiv;
 
-public class ArtistMap : ClassMap<Artist>
+public sealed class ArtistMap : ClassMap<Artist>
 {
     public ArtistMap()
     {
@@ -12,7 +12,7 @@ public class ArtistMap : ClassMap<Artist>
     }
 }
 
-public class IllustMap : ClassMap<Illust>
+public sealed class IllustMap : ClassMap<Illust>
 {
     public IllustMap()
     {
@@ -30,7 +30,7 @@ public class IllustMap : ClassMap<Illust>
     }
 }
 
-public class TagMap : ClassMap<Tag>
+public sealed class TagMap : ClassMap<Tag>
 {
     public TagMap()
     {
@@ -41,7 +41,7 @@ public class TagMap : ClassMap<Tag>
     }
 }
 
-public class PageMap : ClassMap<Page>
+public sealed class PageMap : ClassMap<Page>
 {
     public PageMap()
     {

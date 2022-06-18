@@ -1,11 +1,13 @@
 ﻿using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 namespace PixivSync.Pixiv;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public class Artist : User
 {
-    public string Name { get; set; }
-    public virtual ICollection<Illust> Illusts { get; protected set; }
+    public string Name { get; set; } = null!;
+    public virtual ICollection<Illust> Illusts { get; protected set; } = null!;
 
     public string NormalizedName
     {

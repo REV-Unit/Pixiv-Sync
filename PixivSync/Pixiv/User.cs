@@ -1,9 +1,11 @@
-﻿using NHibernate;
+﻿using JetBrains.Annotations;
+using NHibernate;
 using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
 using Serilog;
 
 namespace PixivSync.Pixiv;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public class User
 {
     public long Id { get; init; }

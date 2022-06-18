@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using JetBrains.Annotations;
 using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
 using PixivSync.Pixiv.ApiResponse.GetIllustInfoResponse;
 using PixivSync.Pixiv.ApiResponse.GetIllustPagesResponse;
@@ -8,6 +9,7 @@ using Serilog;
 
 namespace PixivSync.Pixiv;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public class Illust
 {
     public long Id { get; init; }

@@ -1,9 +1,12 @@
-﻿namespace PixivSync.Pixiv;
+﻿using JetBrains.Annotations;
 
+namespace PixivSync.Pixiv;
+
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public class Tag
 {
-    public string Name { get; init; }
+    public string Name { get; init; } = null!;
     public string? Translation { get; set; }
     public string? RomajiName { get; set; }
-    public virtual ICollection<Illust> Illusts { get; protected set; }
+    public virtual ICollection<Illust> Illusts { get; protected set; } = null!;
 }

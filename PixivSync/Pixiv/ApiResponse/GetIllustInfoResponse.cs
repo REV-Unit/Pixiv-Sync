@@ -5,13 +5,13 @@
 namespace PixivSync.Pixiv.ApiResponse.GetIllustInfoResponse;
 
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-public class AlternateLanguages
+public sealed class AlternateLanguages
 {
     public string en { get; set; }
     public string ja { get; set; }
 }
 
-public class IllustInfo
+public sealed class IllustInfo
 {
     public string alt { get; set; }
     public int bookmarkCount { get; set; }
@@ -64,18 +64,18 @@ public class IllustInfo
     public int xRestrict { get; set; }
 }
 
-public class BookmarkData
+public sealed class BookmarkData
 {
     public string id { get; set; }
     public bool @private { get; set; }
 }
 
-public class ExtraData
+public sealed class ExtraData
 {
     public Meta meta { get; set; }
 }
 
-public class Meta
+public sealed class Meta
 {
     public AlternateLanguages alternateLanguages { get; set; }
     public string canonical { get; set; }
@@ -86,7 +86,7 @@ public class Meta
     public Twitter twitter { get; set; }
 }
 
-public class Ogp
+public sealed class Ogp
 {
     public string description { get; set; }
     public string image { get; set; }
@@ -94,14 +94,14 @@ public class Ogp
     public string type { get; set; }
 }
 
-public class GetIllustInfoResponse
+public sealed class GetIllustInfoResponse
 {
     public IllustInfo body { get; set; }
     public bool error { get; set; }
     public string message { get; set; }
 }
 
-public class TagList
+public sealed class TagList
 {
     public string authorId { get; set; }
     public bool isLocked { get; set; }
@@ -109,7 +109,7 @@ public class TagList
     public bool writable { get; set; }
 }
 
-public class Tag
+public sealed class Tag
 {
     public bool deletable { get; set; }
     public bool locked { get; set; }
@@ -120,18 +120,18 @@ public class Tag
     public string userName { get; set; }
 }
 
-public class TitleCaptionTranslation
+public sealed class TitleCaptionTranslation
 {
     public object workCaption { get; set; }
     public object workTitle { get; set; }
 }
 
-public class Translation
+public sealed class Translation
 {
     public string en { get; set; }
 }
 
-public class Twitter
+public sealed class Twitter
 {
     public string card { get; set; }
     public string description { get; set; }
@@ -139,7 +139,7 @@ public class Twitter
     public string title { get; set; }
 }
 
-public class Urls
+public sealed class Urls
 {
     public string mini { get; set; }
     public string original { get; set; }

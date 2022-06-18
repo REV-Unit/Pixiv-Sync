@@ -4,20 +4,20 @@
 
 namespace PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
 
-public class Body
+public sealed class Body
 {
     public int total { get; set; }
     public List<IllustBookmarkInfo> works { get; set; }
 }
 
-public class GetBookmarksResponse
+public sealed class GetBookmarksResponse
 {
     public Body body { get; set; }
     public bool error { get; set; }
     public string message { get; set; }
 }
 
-public class IllustBookmarkInfo
+public sealed class IllustBookmarkInfo
 {
     public object /* string or integer */ id { get; set; }
 

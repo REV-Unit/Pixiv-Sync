@@ -1,16 +1,21 @@
 ﻿using System.Text.Json.Serialization;
+using JetBrains.Annotations;
 using Refit;
 
 namespace PixivSync;
 
-public record JsonRpcParams(string Method, [property: JsonPropertyName("params")] params object[] Params)
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+public sealed record JsonRpcParams(string Method, [property: JsonPropertyName("params")] params object[] Params)
 {
+#pragma warning disable CA1822 // 将成员标记为 static
     [JsonPropertyName("jsonrpc")] public string JsonRpc => "2.0";
 
     [JsonPropertyName("id")] public string Id => "PixivSync";
+#pragma warning restore CA1822 // 将成员标记为 static
 }
 
-public record AddUriParams
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+public sealed record AddUriParams
 {
     [JsonPropertyName("out")] public string? SaveName { get; init; }
 
@@ -38,14 +43,16 @@ public interface IAria2Rpc
     Task<Aria2RpcResponse> Invoke(JsonRpcParams rpcParams);
 }
 
-public record Error
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+public sealed record Error
 {
     [JsonPropertyName("code")] public int Code { get; init; }
 
     [JsonPropertyName("message")] public string? Message { get; init; }
 }
 
-public record Aria2RpcResponse
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+public sealed record Aria2RpcResponse
 {
     [JsonPropertyName("id")] public string? Id { get; init; }
 
@@ -55,7 +62,7 @@ public record Aria2RpcResponse
     [JsonPropertyName("result")] public string? Result { get; init; }
 }
 
-public class Aria2
+public sealed class Aria2
 {
     private readonly IAria2Rpc _rpc;
 

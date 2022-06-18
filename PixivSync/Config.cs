@@ -1,9 +1,11 @@
-﻿using Serilog.Events;
+﻿using JetBrains.Annotations;
+using Serilog.Events;
 using YamlDotNet.Serialization;
 
 namespace PixivSync;
 
-public class Config
+[UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
+public sealed class Config
 {
     private const string FilePath = "config.yml";
 
@@ -30,12 +32,14 @@ public class Config
     public string DbPath { get; set; } = string.Empty;
     public bool UsePrivateBookmarks { get; set; }
 
+    [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
     public class LogSettings
     {
         public string? Dir { get; set; }
         public LogEventLevel Level { get; set; } = LogEventLevel.Information;
     }
 
+    [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
     public class AuthSettings
     {
         private string? _auxCookie;
