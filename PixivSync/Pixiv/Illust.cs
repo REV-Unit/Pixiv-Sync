@@ -24,23 +24,23 @@ public class Illust
     public virtual IList<Page>? Pages { get; set; }
     public bool Deleted { get; set; }
 
-    public static async IAsyncEnumerable<TResult> ParallelSelectAsync<T, TResult>(IAsyncEnumerable<T> sequence,
-        int maximumConcurrency, Func<T, Task<TResult>> func)
+    public static async IAsyncEnumerable<TResult> ConcurrentSelectAsync<T, TResult>(IAsyncEnumerable<T> source,
+        Func<T, Task<TResult>> selector, int maximumConcurrency)
     {
         using var semaphore = new SemaphoreSlim(maximumConcurrency);
 
-        static async Task<TResult> Limiter(T param, Func<T, Task<TResult>> func, SemaphoreSlim semaphore)
+        static async Task<TResult> Limit(Func<T, Task<TResult>> func, T param, SemaphoreSlim semaphore)
         {
             TResult result = await func(param);
             semaphore.Release();
             return result;
         }
 
-        var tasks = new List<Task<TResult>>();
-        await foreach (T item in sequence)
+        var tasks = new HashSet<Task<TResult>>();
+        await foreach (T item in source)
         {
             await semaphore.WaitAsync();
-            tasks.Add(Limiter(item, func, semaphore));
+            tasks.Add(Limit(selector, item, semaphore));
         }
 
         while (tasks.Any())
@@ -54,7 +54,7 @@ public class Illust
     public static IAsyncEnumerable<Illust> FromBookmarkInfo(IAsyncEnumerable<IllustBookmarkInfo> bookmarks)
     {
         Log.Information("开始获取插画详细信息");
-        return ParallelSelectAsync(bookmarks, 50, FromBookmarkInfo);
+        return ConcurrentSelectAsync(bookmarks, FromBookmarkInfo, 50);
     }
 
     public static async Task<Illust> FromBookmarkInfo(IllustBookmarkInfo bookmarkInfo)
