@@ -67,10 +67,15 @@ public class Illust
         {
             string? cookie = bookmarkInfo.xRestrict == 1 ? Config.Default.Auth.AuxCookie : null;
             IAsyncPolicy retryPolicy = Policy.Handle<HttpRequestException>().RetryAsync(3);
-            illustInfo = (await retryPolicy.ExecuteAsync(() =>
-                pixivApi.GetIllustInfo(illustId, cookie))).body;
-            pages = (await retryPolicy.ExecuteAsync(() =>
-                pixivApi.GetIllustPages(illustId, cookie))).body;
+
+            Task<GetIllustInfoResponse> illustInfoTask = retryPolicy.ExecuteAsync(() =>
+                pixivApi.GetIllustInfo(illustId, cookie));
+            Task<GetIllustPagesResponse> pagesTask = retryPolicy.ExecuteAsync(() =>
+                pixivApi.GetIllustPages(illustId, cookie));
+
+            await Task.WhenAll(illustInfoTask, pagesTask);
+            illustInfo = illustInfoTask.Result.body;
+            pages = pagesTask.Result.body;
         }
         catch (ApiException e)
         {
