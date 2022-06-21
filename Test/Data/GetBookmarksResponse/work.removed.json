@@ -1,0 +1,31 @@
+﻿{
+  "id": 114514,
+  "title": "-----",
+  "illustType": 0,
+  "xRestrict": 0,
+  "restrict": 0,
+  "sl": 0,
+  "url": "https://s.pximg.net/common/images/limit_unknown_360.png",
+  "description": "-----",
+  "tags": [],
+  "userId": 0,
+  "userName": "-----",
+  "width": 100,
+  "height": 100,
+  "pageCount": 1,
+  "isBookmarkable": false,
+  "bookmarkData": {
+    "id": "114514",
+    "private": true
+  },
+  "alt": "----- / January 1st, 1970",
+  "titleCaptionTranslation": {
+    "workTitle": null,
+    "workCaption": null
+  },
+  "createDate": "1970-01-01T00:00:00+09:00",
+  "updateDate": "1970-01-01T00:00:00+09:00",
+  "isUnlisted": false,
+  "isMasked": true,
+  "maskReason": "unknown"
+}

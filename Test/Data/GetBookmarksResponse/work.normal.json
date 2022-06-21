@@ -1,0 +1,33 @@
+﻿{
+  "id": "114514",
+  "title": "[REDACTED]",
+  "illustType": 0,
+  "xRestrict": 0,
+  "restrict": 0,
+  "sl": 2,
+  "url": "[REDACTED]",
+  "description": "",
+  "tags": [
+    "[REDACTED]"
+  ],
+  "userId": "114514",
+  "userName": "[REDACTED]",
+  "width": 1000,
+  "height": 1666,
+  "pageCount": 1,
+  "isBookmarkable": true,
+  "bookmarkData": {
+    "id": "114514",
+    "private": true
+  },
+  "alt": "[REDACTED]",
+  "titleCaptionTranslation": {
+    "workTitle": null,
+    "workCaption": null
+  },
+  "createDate": "2022-04-01T23:00:00+09:00",
+  "updateDate": "2022-04-01T23:00:00+09:00",
+  "isUnlisted": false,
+  "isMasked": false,
+  "profileImageUrl": "[REDACTED]"
+}
