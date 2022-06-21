@@ -15,7 +15,7 @@ public sealed record JsonRpcParams(string Method, [property: JsonPropertyName("p
 }
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-public sealed record AddUriParams
+public sealed record AddUriOptions
 {
     [JsonPropertyName("out")] public string? SaveName { get; init; }
 
@@ -63,15 +63,25 @@ public sealed record Aria2RpcResponse
 public sealed class Aria2
 {
     private readonly IAria2Rpc _rpc;
+    private readonly string? _rpcSecret;
 
-    public Aria2(string hostUrl = "http://127.0.0.1:6800")
+    public Aria2(string jsonRpcUrl, string? rpcSecret = null)
     {
-        _rpc = RestService.For<IAria2Rpc>(hostUrl, new RefitSettings { Buffered = true });
+        _rpcSecret = rpcSecret;
+        _rpc = RestService.For<IAria2Rpc>(jsonRpcUrl, new RefitSettings { Buffered = true });
     }
 
-    public Task<Aria2RpcResponse> AddUri(string uri, AddUriParams addUriParams)
+    public Task<Aria2RpcResponse> AddUri(string uri, AddUriOptions addUriOptions)
     {
-        var @params = new JsonRpcParams("aria2.addUri", new[] { uri }, addUriParams);
+        var addUriParams = new List<object>();
+        if (_rpcSecret != null)
+        {
+            addUriParams.Add($"token:{_rpcSecret}");
+        }
+
+        addUriParams.Add(new[] { uri });
+        addUriParams.Add(addUriOptions);
+        var @params = new JsonRpcParams("aria2.addUri", addUriParams.ToArray());
         return _rpc.Invoke(@params);
     }
 }

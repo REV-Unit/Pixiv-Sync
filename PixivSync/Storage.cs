@@ -58,7 +58,7 @@ public sealed class Storage
     public async Task BeginDownload(IAsyncEnumerable<Illust> illusts)
     {
         Log.Information("开始发送下载到 Aria2");
-        var aria2 = new Aria2();
+        var aria2 = new Aria2(Config.Default.Aria2.JsonRpcUrl, Config.Default.Aria2.RpcSecret);
         int sentCount = 0, skippedCount = 0;
 
         await foreach (Illust illust in illusts.Where(illust => !illust.Deleted && illust.Type != IllustType.Ugoira))
@@ -82,7 +82,7 @@ public sealed class Storage
                 Log.Information("发送下载 {PageName}", pageName);
 
                 await aria2.AddUri(illustPage.Original,
-                    new AddUriParams
+                    new AddUriOptions
                     {
                         SaveDir = saveDir,
                         Referer = "https://www.pixiv.net",

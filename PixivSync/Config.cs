@@ -28,6 +28,8 @@ public sealed class Config
 
     public AuthSettings Auth { get; set; } = new();
 
+    public Aria2Settings Aria2 { get; set; } = new();
+
     public string StoragePath { get; set; } = string.Empty;
     public string DbPath { get; set; } = string.Empty;
     public bool UsePrivateBookmarks { get; set; }
@@ -51,5 +53,12 @@ public sealed class Config
             get => _auxCookie ?? Cookie;
             set => _auxCookie = value;
         }
+    }
+
+    [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
+    public class Aria2Settings
+    {
+        public string JsonRpcUrl { get; set; } = "http://127.0.0.1:6800";
+        public string? RpcSecret { get; set; }
     }
 }
