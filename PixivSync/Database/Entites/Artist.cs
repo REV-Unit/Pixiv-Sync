@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 
-namespace PixivSync.Pixiv;
+namespace PixivSync.Database.Entites;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public class Artist : User

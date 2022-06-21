@@ -1,7 +1,8 @@
 ﻿using FluentNHibernate.Mapping;
 using JetBrains.Annotations;
+using PixivSync.Database.Entites;
 
-namespace PixivSync.Pixiv;
+namespace PixivSync.Database;
 
 [UsedImplicitly]
 public sealed class ArtistMap : ClassMap<Artist>

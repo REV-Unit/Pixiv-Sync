@@ -1,9 +1,10 @@
 ﻿using JetBrains.Annotations;
 using NHibernate;
+using PixivSync.Pixiv;
 using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
 using Serilog;
 
-namespace PixivSync.Pixiv;
+namespace PixivSync.Database.Entites;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public class User
@@ -47,7 +48,7 @@ public class User
     public IAsyncEnumerable<IllustBookmarkInfo> GetAddedBookmarks(bool @private)
     {
         Log.Information("开始获取添加的收藏");
-        using ISession session = Database.SessionFactory.OpenSession();
+        using ISession session = Db.SessionFactory.OpenSession();
         HashSet<long> ids = session.Query<Illust>().Select(illust => illust.Id).ToHashSet();
         return EnumerateBookmarks(@private).TakeWhile(bookmarkInfo => !ids.Contains(Convert.ToInt64(bookmarkInfo.Id)));
     }

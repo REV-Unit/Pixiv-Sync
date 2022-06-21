@@ -1,5 +1,6 @@
 ﻿using NHibernate;
-using PixivSync.Pixiv;
+using PixivSync.Database;
+using PixivSync.Database.Entites;
 using Serilog;
 
 namespace PixivSync;
@@ -21,7 +22,7 @@ public sealed class Storage
     public void ResolveArtistNameChanges()
     {
         Log.Information("正在处理画师改名情况");
-        using ISession session = Database.SessionFactory.OpenSession();
+        using ISession session = Db.SessionFactory.OpenSession();
         foreach (IGrouping<long, DirectoryInfo> group in Root.GetDirectories()
                      .GroupBy(d => long.Parse(d.Name.Split('_').Last())))
         {

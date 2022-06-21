@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
-using PixivSync.Pixiv;
+using PixivSync.Database;
+using PixivSync.Database.Entites;
 using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
 using Serilog;
 using Spectre.Console.Cli;
@@ -22,7 +23,7 @@ public sealed class SyncPixivCommand : AsyncCommand<SyncPixivCommand.Settings>
 
         Illust[] illusts = await Illust.FromBookmarkInfo(bookmarkInfos).ToArrayAsync();
 
-        await Database.Merge(illusts.ToAsyncEnumerable());
+        await Db.Merge(illusts.ToAsyncEnumerable());
 
         var storage = Storage.Default;
         storage.ResolveArtistNameChanges(); // Resolve before download to avoid duplicates

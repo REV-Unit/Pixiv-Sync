@@ -5,14 +5,14 @@ using FluentNHibernate.Conventions.Helpers;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
-using PixivSync.Pixiv;
+using PixivSync.Database.Entites;
 using Serilog;
 
-namespace PixivSync;
+namespace PixivSync.Database;
 
-public static class Database
+public static class Db
 {
-    static Database()
+    static Db()
     {
         ConfigurationProvider.Current = null; // https://github.com/nhibernate/fluent-nhibernate/discussions/531
         SessionFactory = Fluently.Configure()
