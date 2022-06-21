@@ -25,15 +25,13 @@ public sealed record AddUriParams
 
     [JsonPropertyName("cookie")] public string? Cookie { get; set; }
 
-    [JsonPropertyName("auto-file-renaming")]
-    public bool AutoFileRenaming { get; set; }
+    [JsonPropertyName("auto-file-renaming")] public bool AutoFileRenaming { get; set; }
 
     [JsonPropertyName("condictional-get")] public bool CondictionalGet { get; set; }
 
     [JsonPropertyName("retry-wait")] public int RetryWait { get; set; }
 
-    [JsonPropertyName("max-connection-per-server")]
-    public int MaxConnection { get; set; }
+    [JsonPropertyName("max-connection-per-server")] public int MaxConnection { get; set; }
 }
 
 [Headers("Content-Type: application/json;charset=UTF-8")]

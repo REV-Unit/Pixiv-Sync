@@ -1,149 +1,115 @@
-﻿// ReSharper disable All
+﻿using System.Text.Json.Serialization;
 
-#pragma warning disable
+// ReSharper disable All
 
 namespace PixivSync.Pixiv.ApiResponse.GetIllustInfoResponse;
 
-// Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-public sealed class AlternateLanguages
-{
-    public string en { get; set; }
-    public string ja { get; set; }
-}
+public record GetIllustInfoResponse(
+    [property: JsonPropertyName("error")] bool Error,
+    [property: JsonPropertyName("message")] string Message,
+    [property: JsonPropertyName("body")] IllustInfo Body
+);
 
-public sealed class IllustInfo
-{
-    public string alt { get; set; }
-    public int bookmarkCount { get; set; }
-    public BookmarkData bookmarkData { get; set; }
-    public object comicPromotion { get; set; }
-    public int commentCount { get; set; }
-    public int commentOff { get; set; }
-    public List<object> contestBanners { get; set; }
-    public object contestData { get; set; }
-    public DateTime createDate { get; set; }
-    public string description { get; set; }
-    public object descriptionBoothId { get; set; }
+public record IllustInfo(
+    [property: JsonPropertyName("illustId"), JsonConverter(typeof(IdConverter))] long IllustId,
+    [property: JsonPropertyName("illustTitle")] string IllustTitle,
+    [property: JsonPropertyName("illustComment")] string IllustComment,
+    [property: JsonPropertyName("id"), JsonConverter(typeof(IdConverter))] long Id,
+    [property: JsonPropertyName("title")] string Title,
+    [property: JsonPropertyName("description")] string Description,
+    [property: JsonPropertyName("illustType")] int IllustType,
+    [property: JsonPropertyName("createDate")] DateTime CreateDate,
+    [property: JsonPropertyName("uploadDate")] DateTime UploadDate,
+    [property: JsonPropertyName("restrict")] int Restrict,
+    [property: JsonPropertyName("xRestrict")] int XRestrict,
+    [property: JsonPropertyName("sl")] int Sl,
+    [property: JsonPropertyName("urls")] Urls Urls,
+    [property: JsonPropertyName("tags")] TagsInfo TagsInfo,
+    [property: JsonPropertyName("alt")] string Alt,
+    [property: JsonPropertyName("storableTags")] IReadOnlyList<string> StorableTags,
+    [property: JsonPropertyName("userId"), JsonConverter(typeof(IdConverter))] long UserId,
+    [property: JsonPropertyName("userName")] string UserName,
+    [property: JsonPropertyName("userAccount")] string UserAccount,
+    [property: JsonPropertyName("likeData")] bool LikeData,
+    [property: JsonPropertyName("width")] int Width,
+    [property: JsonPropertyName("height")] int Height,
+    [property: JsonPropertyName("pageCount")] int PageCount,
+    [property: JsonPropertyName("bookmarkCount")] int BookmarkCount,
+    [property: JsonPropertyName("likeCount")] int LikeCount,
+    [property: JsonPropertyName("commentCount")] int CommentCount,
+    [property: JsonPropertyName("responseCount")] int ResponseCount,
+    [property: JsonPropertyName("viewCount")] int ViewCount,
+    [property: JsonPropertyName("bookStyle")] int BookStyle,
+    [property: JsonPropertyName("isHowto")] bool IsHowto,
+    [property: JsonPropertyName("isOriginal")] bool IsOriginal,
+    [property: JsonPropertyName("imageResponseOutData")] IReadOnlyList<object> ImageResponseOutData,
+    [property: JsonPropertyName("imageResponseData")] IReadOnlyList<object> ImageResponseData,
+    [property: JsonPropertyName("imageResponseCount")] int ImageResponseCount,
+    [property: JsonPropertyName("pollData")] object PollData,
+    [property: JsonPropertyName("seriesNavData")] object SeriesNavData,
+    [property: JsonPropertyName("descriptionBoothId")] object DescriptionBoothId,
+    [property: JsonPropertyName("descriptionYoutubeId")] object DescriptionYoutubeId,
+    [property: JsonPropertyName("comicPromotion")] object ComicPromotion,
+    [property: JsonPropertyName("fanboxPromotion")] FanboxPromotion FanboxPromotion,
+    [property: JsonPropertyName("contestBanners")] IReadOnlyList<object> ContestBanners,
+    [property: JsonPropertyName("isBookmarkable")] bool IsBookmarkable,
+    [property: JsonPropertyName("bookmarkData")] BookmarkData BookmarkData,
+    [property: JsonPropertyName("contestData")] object ContestData,
+    [property: JsonPropertyName("titleCaptionTranslation")] TitleCaptionTranslation TitleCaptionTranslation,
+    [property: JsonPropertyName("isUnlisted")] bool IsUnlisted,
+    [property: JsonPropertyName("request")] object Request,
+    [property: JsonPropertyName("commentOff")] int CommentOff
+);
 
-    public string descriptionYoutubeId { get; set; }
+public record TagsInfo(
+    [property: JsonPropertyName("authorId")] string AuthorId,
+    [property: JsonPropertyName("isLocked")] bool IsLocked,
+    [property: JsonPropertyName("tags")] IReadOnlyList<Tag> Tags,
+    [property: JsonPropertyName("writable")] bool Writable
+);
 
-    //public ExtraData extraData { get; set; }
-    public object fanboxPromotion { get; set; }
-    public int height { get; set; }
-    public string id { get; set; }
-    public string illustComment { get; set; }
-    public string illustId { get; set; }
-    public string illustTitle { get; set; }
-    public int illustType { get; set; }
-    public int imageResponseCount { get; set; }
-    public List<object> imageResponseData { get; set; }
-    public List<object> imageResponseOutData { get; set; }
-    public bool isBookmarkable { get; set; }
-    public bool isHowto { get; set; }
-    public bool isOriginal { get; set; }
-    public bool isUnlisted { get; set; }
-    public int likeCount { get; set; }
-    public bool likeData { get; set; }
-    public int pageCount { get; set; }
-    public object pollData { get; set; }
-    public object request { get; set; }
-    public int responseCount { get; set; }
-    public int restrict { get; set; }
-    public object seriesNavData { get; set; }
-    public int sl { get; set; }
-    public TagList tags { get; set; }
-    public string title { get; set; }
-    public TitleCaptionTranslation titleCaptionTranslation { get; set; }
-    public DateTime uploadDate { get; set; }
-    public Urls urls { get; set; }
-    public string userAccount { get; set; }
-    public string userId { get; set; }
-    public string userName { get; set; }
-    public int viewCount { get; set; }
-    public int width { get; set; }
-    public int xRestrict { get; set; }
-}
+public record BookmarkData(
+    [property: JsonPropertyName("id")] string Id,
+    [property: JsonPropertyName("private")] bool Private
+);
 
-public sealed class BookmarkData
-{
-    public string id { get; set; }
-    public bool @private { get; set; }
-}
+public record FanboxPromotion(
+    [property: JsonPropertyName("userName")] string UserName,
+    [property: JsonPropertyName("userImageUrl")] string UserImageUrl,
+    [property: JsonPropertyName("contentUrl")] string ContentUrl,
+    [property: JsonPropertyName("description")] string Description,
+    [property: JsonPropertyName("imageUrl")] string ImageUrl,
+    [property: JsonPropertyName("imageUrlMobile")] string ImageUrlMobile,
+    [property: JsonPropertyName("hasAdultContent")] bool HasAdultContent
+);
 
-public sealed class ExtraData
-{
-    public Meta meta { get; set; }
-}
+public record Tag(
+    [property: JsonPropertyName("tag")] string Name,
+    [property: JsonPropertyName("locked")] bool Locked,
+    [property: JsonPropertyName("deletable")] bool Deletable,
+    [property: JsonPropertyName("userId")] string UserId,
+    [property: JsonPropertyName("romaji")] string Romaji,
+    [property: JsonPropertyName("translation")] Translation? Translation,
+    [property: JsonPropertyName("userName")] string UserName,
+    [property: JsonPropertyName("authorId")] string AuthorId,
+    [property: JsonPropertyName("isLocked")] bool IsLocked,
+    [property: JsonPropertyName("tags")] IReadOnlyList<Tag> Tags,
+    [property: JsonPropertyName("writable")] bool Writable
+);
 
-public sealed class Meta
-{
-    public AlternateLanguages alternateLanguages { get; set; }
-    public string canonical { get; set; }
-    public string description { get; set; }
-    public string descriptionHeader { get; set; }
-    public Ogp ogp { get; set; }
-    public string title { get; set; }
-    public Twitter twitter { get; set; }
-}
+public record TitleCaptionTranslation(
+    [property: JsonPropertyName("workTitle")] object WorkTitle,
+    [property: JsonPropertyName("workCaption")] object WorkCaption
+);
 
-public sealed class Ogp
-{
-    public string description { get; set; }
-    public string image { get; set; }
-    public string title { get; set; }
-    public string type { get; set; }
-}
+public record Translation(
+    [property: JsonPropertyName("en")] string En
+);
 
-public sealed class GetIllustInfoResponse
-{
-    public IllustInfo body { get; set; }
-    public bool error { get; set; }
-    public string message { get; set; }
-}
-
-public sealed class TagList
-{
-    public string authorId { get; set; }
-    public bool isLocked { get; set; }
-    public List<Tag> tags { get; set; }
-    public bool writable { get; set; }
-}
-
-public sealed class Tag
-{
-    public bool deletable { get; set; }
-    public bool locked { get; set; }
-    public string? romaji { get; set; }
-    public string tag { get; set; }
-    public Translation? translation { get; set; }
-    public string userId { get; set; }
-    public string userName { get; set; }
-}
-
-public sealed class TitleCaptionTranslation
-{
-    public object workCaption { get; set; }
-    public object workTitle { get; set; }
-}
-
-public sealed class Translation
-{
-    public string en { get; set; }
-}
-
-public sealed class Twitter
-{
-    public string card { get; set; }
-    public string description { get; set; }
-    public string image { get; set; }
-    public string title { get; set; }
-}
-
-public sealed class Urls
-{
-    public string mini { get; set; }
-    public string original { get; set; }
-    public string regular { get; set; }
-    public string small { get; set; }
-    public string thumb { get; set; }
-}
+public record Urls(
+    [property: JsonPropertyName("mini")] string Mini,
+    [property: JsonPropertyName("thumb")] string Thumb,
+    [property: JsonPropertyName("small")] string Small,
+    [property: JsonPropertyName("regular")] string Regular,
+    [property: JsonPropertyName("original")] string Original
+);

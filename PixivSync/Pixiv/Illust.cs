@@ -61,21 +61,21 @@ public class Illust
     {
         IPixivApi pixivApi = PixivApi.Default;
         IllustInfo illustInfo;
-        long illustId = long.Parse(bookmarkInfo.id.ToString()!);
-        List<PageInfo> pages;
+
+        IReadOnlyList<PageInfo> pages;
         try
         {
-            string? cookie = bookmarkInfo.xRestrict == 1 ? Config.Default.Auth.AuxCookie : null;
+            string? cookie = bookmarkInfo.XRestrict == 1 ? Config.Default.Auth.AuxCookie : null;
             IAsyncPolicy retryPolicy = Policy.Handle<HttpRequestException>().RetryAsync(3);
 
             Task<GetIllustInfoResponse> illustInfoTask = retryPolicy.ExecuteAsync(() =>
-                pixivApi.GetIllustInfo(illustId, cookie));
+                pixivApi.GetIllustInfo(bookmarkInfo.Id, cookie));
             Task<GetIllustPagesResponse> pagesTask = retryPolicy.ExecuteAsync(() =>
-                pixivApi.GetIllustPages(illustId, cookie));
+                pixivApi.GetIllustPages(bookmarkInfo.Id, cookie));
 
             await Task.WhenAll(illustInfoTask, pagesTask);
-            illustInfo = illustInfoTask.Result.body;
-            pages = pagesTask.Result.body;
+            illustInfo = illustInfoTask.Result.Body;
+            pages = pagesTask.Result.Body;
         }
         catch (ApiException e)
         {
@@ -83,7 +83,7 @@ public class Illust
 
             return new Illust
             {
-                Id = illustId,
+                Id = bookmarkInfo.Id,
                 Deleted = true
             };
         }
@@ -93,41 +93,40 @@ public class Illust
 
     public static Illust ParseFromInfo(IllustInfo illustInfo, IEnumerable<PageInfo> pageInfos)
     {
-        long illustId = long.Parse(illustInfo.id);
         return new Illust
         {
-            Id = illustId,
+            Id = illustInfo.Id,
             Artist = new Artist
             {
-                Id = long.Parse(illustInfo.userId),
-                Name = illustInfo.userName
+                Id = illustInfo.UserId,
+                Name = illustInfo.UserName
             },
-            Title = illustInfo.title,
-            Description = illustInfo.description,
+            Title = illustInfo.Title,
+            Description = illustInfo.Description,
             RestrictType = illustInfo switch
             {
-                { restrict: 1 } => RestrictType.Sensitive,
-                { xRestrict: 1 } => RestrictType.R18,
+                { Restrict: 1 } => RestrictType.Sensitive,
+                { XRestrict: 1 } => RestrictType.R18,
                 _ => RestrictType.None
             },
-            Type = (IllustType)illustInfo.illustType,
-            CreateDate = illustInfo.createDate,
-            UploadDate = illustInfo.uploadDate,
-            Tags = illustInfo.tags.tags.Select(t => new Tag
+            Type = (IllustType)illustInfo.IllustType,
+            CreateDate = illustInfo.CreateDate,
+            UploadDate = illustInfo.UploadDate,
+            Tags = illustInfo.TagsInfo.Tags.Select(t => new Tag
             {
-                Name = t.tag,
-                Translation = t.translation?.en,
-                RomajiName = t.romaji
+                Name = t.Name,
+                Translation = t.Translation?.En,
+                RomajiName = t.Romaji
             }).ToHashSet(),
             Pages = pageInfos.Select((pageInfo, i) => new Page
             {
-                Id = new PageId { IllustId = illustId, Number = i },
-                Width = pageInfo.width,
-                Height = pageInfo.height,
-                ThumbMini = pageInfo.urls.thumb_mini,
-                Small = pageInfo.urls.small,
-                Regular = pageInfo.urls.regular,
-                Original = pageInfo.urls.original
+                Id = new PageId { IllustId = illustInfo.Id, Number = i },
+                Width = pageInfo.Width,
+                Height = pageInfo.Height,
+                ThumbMini = pageInfo.Urls.ThumbMini,
+                Small = pageInfo.Urls.Small,
+                Regular = pageInfo.Urls.Regular,
+                Original = pageInfo.Urls.Original
             }).ToArray()
         };
     }

@@ -1,27 +1,24 @@
 ﻿// ReSharper disable All
 
-#pragma warning disable
+using System.Text.Json.Serialization;
 
 namespace PixivSync.Pixiv.ApiResponse.GetIllustPagesResponse;
 
-public sealed class GetIllustPagesResponse
-{
-    public bool error { get; set; }
-    public string message { get; set; }
-    public List<PageInfo> body { get; set; }
-}
+public record PageInfo(
+    [property: JsonPropertyName("urls")] Urls Urls,
+    [property: JsonPropertyName("width")] int Width,
+    [property: JsonPropertyName("height")] int Height
+);
 
-public sealed class PageInfo
-{
-    public Urls urls { get; set; }
-    public int width { get; set; }
-    public int height { get; set; }
-}
+public record GetIllustPagesResponse(
+    [property: JsonPropertyName("error")] bool Error,
+    [property: JsonPropertyName("message")] string Message,
+    [property: JsonPropertyName("body")] IReadOnlyList<PageInfo> Body
+);
 
-public sealed class Urls
-{
-    public string thumb_mini { get; set; }
-    public string small { get; set; }
-    public string regular { get; set; }
-    public string original { get; set; }
-}
+public record Urls(
+    [property: JsonPropertyName("thumb_mini")] string ThumbMini,
+    [property: JsonPropertyName("small")] string Small,
+    [property: JsonPropertyName("regular")] string Regular,
+    [property: JsonPropertyName("original")] string Original
+);
