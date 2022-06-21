@@ -1,4 +1,5 @@
 ﻿using PixivSync;
+using PixivSync.Commands;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using Spectre.Console.Cli;

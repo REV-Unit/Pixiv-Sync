@@ -5,7 +5,7 @@ using PixivSync.Pixiv.ApiResponse.GetBookmarksResponse;
 using Serilog;
 using Spectre.Console.Cli;
 
-namespace PixivSync;
+namespace PixivSync.Commands;
 
 [UsedImplicitly(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature)]
 public sealed class SyncPixivCommand : AsyncCommand<SyncPixivCommand.Settings>

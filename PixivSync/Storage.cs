@@ -1,6 +1,7 @@
 ﻿using NHibernate;
 using PixivSync.Database;
 using PixivSync.Database.Entites;
+using PixivSync.Downloader;
 using Serilog;
 
 namespace PixivSync;
