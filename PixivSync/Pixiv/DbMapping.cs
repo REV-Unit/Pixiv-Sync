@@ -1,7 +1,9 @@
 ﻿using FluentNHibernate.Mapping;
+using JetBrains.Annotations;
 
 namespace PixivSync.Pixiv;
 
+[UsedImplicitly]
 public sealed class ArtistMap : ClassMap<Artist>
 {
     public ArtistMap()
@@ -12,6 +14,7 @@ public sealed class ArtistMap : ClassMap<Artist>
     }
 }
 
+[UsedImplicitly]
 public sealed class IllustMap : ClassMap<Illust>
 {
     public IllustMap()
@@ -30,6 +33,7 @@ public sealed class IllustMap : ClassMap<Illust>
     }
 }
 
+[UsedImplicitly]
 public sealed class TagMap : ClassMap<Tag>
 {
     public TagMap()
@@ -41,6 +45,7 @@ public sealed class TagMap : ClassMap<Tag>
     }
 }
 
+[UsedImplicitly]
 public sealed class PageMap : ClassMap<Page>
 {
     public PageMap()
