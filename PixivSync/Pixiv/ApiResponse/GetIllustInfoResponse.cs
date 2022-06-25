@@ -39,7 +39,7 @@ public record IllustInfo(
     [property: JsonPropertyName("commentCount")] int CommentCount,
     [property: JsonPropertyName("responseCount")] int ResponseCount,
     [property: JsonPropertyName("viewCount")] int ViewCount,
-    [property: JsonPropertyName("bookStyle")] int BookStyle,
+    // [property: JsonPropertyName("bookStyle")] int BookStyle,
     [property: JsonPropertyName("isHowto")] bool IsHowto,
     [property: JsonPropertyName("isOriginal")] bool IsOriginal,
     [property: JsonPropertyName("imageResponseOutData")] IReadOnlyList<object> ImageResponseOutData,

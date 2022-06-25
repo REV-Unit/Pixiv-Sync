@@ -27,7 +27,7 @@ public interface IPixivApi
 
 public static class PixivApi
 {
-    public static IPixivApi Default { get; set; } = RestService.For<IPixivApi>("https://www.pixiv.net");
+    public static IPixivApi Default { get; } = RestService.For<IPixivApi>("https://www.pixiv.net");
 
     public static string BookmarkRestrictType(bool @private)
     {
