@@ -20,6 +20,9 @@ Auth:
   Id: 114514 # 你的Pixiv ID，用于获取收藏列表
   Cookie: PHPSESSID=xxxxxx # PHPSESSID可以打开浏览器用F12查找
   AuxCookie: PHPSESSID=xxxxxx # 副账号PHPSESSID，用于下载以及爬取插画信息。如果你有小号可以填上小号的PHPSESSID，防止大号因为访问过多被Pixiv警告或者封了。
+Aria2:
+  JsonRpcUrl: http://127.0.0.1:6800 # Aria2 JsonRpc地址
+  RpcSecret: # 如果用了RpcSecret授权就填上
 StoragePath: '' # 下载目录
 DbPath: '' # 数据库保存路径
 UsePrivateBookmarks: false # 使用私密收藏？
@@ -39,7 +42,6 @@ UsePrivateBookmarks: false # 使用私密收藏？
 
 * 暂不支持动图下载。
 * 下载路径格式暂时固定为`{画师名}_{画师ID}/{插画ID}_{插画页号}.{扩展名}`。如果你已经在本地有了下载，请确保相对下载目录的路径是这种格式。
-* Aria2的RPC URI暂时固定为`http://127.0.0.1:6800`。
 
 ## License
 
