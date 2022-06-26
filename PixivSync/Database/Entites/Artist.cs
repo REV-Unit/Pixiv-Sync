@@ -13,9 +13,9 @@ public class Artist : User
     {
         get
         {
-            Name = Regex.Replace(Name, @"[\/\\:\*""\?<>\|]", "_");
-            Name = Regex.Replace(Name, @"[@＠][^@＠]*$", string.Empty);
-            return Name;
+            string s = Regex.Replace(Name, @"[\/\\:\*""\?<>\|]", "_");
+            s = Regex.Replace(s, @"[@＠][^@＠]*$", string.Empty);
+            return s;
         }
     }
 }
